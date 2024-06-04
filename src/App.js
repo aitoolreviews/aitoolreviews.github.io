@@ -1,99 +1,36 @@
 import React from "react";
-import { useAppContext } from "./appContext";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchGitHubInfo,
-  selectError,
-  selectIsLoading,
-} from "./pages/homeSlice";
-import { fetchGitHubReops } from "./pages/allProjectsSlice";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { Element } from "react-scroll";
-import { ThemeProvider } from "styled-components";
-// Data
-import { navLogo } from "./data";
-// Components
-import { Container } from "react-bootstrap";
-import { Loading } from "./components/globalStyledComponents";
-import ScrollToTop from "./components/ScrollToTop";
-import GlobalStyles from "./components/GlobalStyles";
-import NavBar from "./components/NavBar";
-// Pages
-import Home from "./pages/Home";
-import AllProjects from "./pages/AllProjects";
-import NotFound from "./pages/NotFound";
 
-const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-const themes = {
-  light: {
-    name: "light",
-    color: "#45413C",
-    background: "#F5F2E8",
-  },
-  dark: {
-    name: "dark",
-    color: "#FBFDFF",
-    background: "#27272A",
-  },
-};
+import chatbotapp from "./chatbotapp.png";
+
 
 export default function App() {
-  const { theme, setTheme } = useAppContext();
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  const dispatch = useDispatch();
-
-  React.useEffect(
-    function () {
-      const updateTheme = () =>
-        darkMode ? setTheme("dark") : setTheme("light");
-      updateTheme();
-      dispatch(fetchGitHubInfo());
-      dispatch(fetchGitHubReops());
+  const links = [
+    { 
+      title: 'Chatbotapp.ai',
+      url: 'https://www.chatbotapp.ai',
+      description: () => (
+        <p>This service provide APIs to freely available or paid AI tools at a very expensive monthly or yearly fee. This guys operates on showing their product on searches related to GPT4 and misleading user to buy their service. The site which exactly look like open ai website. They are even using open ai logo.</p>
+      ),
+      image: chatbotapp
     },
-    [setTheme, dispatch]
+  ];
+
+  return (
+    <div style={{padding: "20px", fontFamily: "Helvetica"}}>
+      <h1>Worst AI Services List (DO NOT LOSS MONEY)</h1>
+      <div style={{paddingTop: "20px", textDecoration: "none"}}>
+        {links.map((link, index) => (
+          <div key={index}>
+            <a style={{paddingTop: "20px", textDecoration: "none"}} href={link.url}><h2>{link.title}</h2></a>
+            <p style={{ fontSize: "19px" }}>{link.description()}</p>
+            <div>
+              <img src={chatbotapp} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p style={{ display: "inline-block" }}>Contribute to the list by committing to</p><div style={{ display: "inline-block", width: "20px", height: "20px" }} /><a style={{ display: "inline-block" }} href="https://github.com/aitoolreviews/aitoolreviews.github.io">Our Github Repo</a>
+    </div>
   );
-
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) =>
-      e.matches ? setTheme("dark") : setTheme("light")
-    );
-
-  if (isLoading) {
-    return (
-      <ThemeProvider theme={themes[theme]}>
-        <GlobalStyles />
-        <Container className="d-flex vh-100 align-items-center">
-          <Loading />
-        </Container>
-      </ThemeProvider>
-    );
-  } else if (error) {
-    return (
-      <ThemeProvider theme={themes[theme]}>
-        <GlobalStyles />
-        <Container className="d-flex vh-100 align-items-center justify-content-center">
-          <h2>{error}</h2>
-        </Container>
-      </ThemeProvider>
-    );
-  } else {
-    return (
-      <HashRouter>
-        <ThemeProvider theme={themes[theme]}>
-          <ScrollToTop />
-          <GlobalStyles />
-          <Element name={"Home"} id="home">
-            <NavBar Logo={navLogo} />
-          </Element>
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/All-Projects" element={<AllProjects />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ThemeProvider>
-      </HashRouter>
-    );
-  }
 }
